@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Search Portal</title>
+  <title>My Search Portal</title>
 
   <style>
     * {
@@ -13,136 +13,192 @@
     body {
       margin: 0;
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #111827, #2563eb);
       color: white;
     }
 
-    .box {
-      width: 90%;
-      max-width: 650px;
-      padding: 35px;
-      text-align: center;
-      background: rgba(255,255,255,0.12);
-      border-radius: 20px;
+    .container {
+      width: 92%;
+      max-width: 800px;
+      margin: auto;
+      padding: 40px 0;
     }
 
     h1 {
-      font-size: 36px;
+      text-align: center;
+      font-size: 38px;
       margin-bottom: 10px;
     }
 
-    p {
-      opacity: 0.85;
+    .subtitle {
+      text-align: center;
+      opacity: .8;
+      margin-bottom: 25px;
     }
 
-    form {
+    .search-box {
       display: flex;
       gap: 10px;
-      margin-top: 20px;
     }
 
     input {
       flex: 1;
       padding: 15px;
-      border: none;
+      border: 0;
       border-radius: 10px;
       font-size: 16px;
+      outline: none;
     }
 
     button {
-      padding: 15px 20px;
-      border: none;
+      padding: 15px 22px;
+      border: 0;
       border-radius: 10px;
       cursor: pointer;
       font-weight: bold;
     }
 
-    .engines {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 20px;
-      flex-wrap: wrap;
+    #results {
+      margin-top: 25px;
     }
 
-    small {
-      display: block;
+    .result {
+      background: rgba(255,255,255,.12);
+      padding: 18px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+    }
+
+    .result h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .result a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .result p {
+      opacity: .85;
+      line-height: 1.5;
+    }
+
+    .status {
+      text-align: center;
       margin-top: 25px;
-      opacity: 0.65;
+      opacity: .8;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="box">
-    <h1>🌐 Web Search Portal</h1>
-    <p>Search the web or open a website.</p>
+  <div class="container">
 
-    <form id="searchForm">
-      <input id="search" placeholder="Search the web..." required>
+    <h1>🌐 My Search</h1>
+
+    <div class="subtitle">
+      Search and view results on this page
+    </div>
+
+    <form id="searchForm" class="search-box">
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="Search for something..."
+        autocomplete="off"
+        required
+      >
+
       <button type="submit">Search</button>
     </form>
 
-    <form id="urlForm">
-      <input id="url" placeholder="https://example.com" required>
-      <button type="submit">Open</button>
-    </form>
+    <div id="status" class="status"></div>
 
-    <div class="engines">
-      <button onclick="googleSearch()">Google</button>
-      <button onclick="duckSearch()">DuckDuckGo</button>
-      <button onclick="bingSearch()">Bing</button>
-    </div>
+    <div id="results"></div>
 
-    <small>
-      Search portal for normal web browsing. It does not bypass network restrictions.
-    </small>
   </div>
 
   <script>
-    function searchWith(engine) {
-      const q = document.getElementById("search").value.trim();
+    const form = document.getElementById("searchForm");
+    const input = document.getElementById("searchInput");
+    const results = document.getElementById("results");
+    const status = document.getElementById("status");
 
-      if (!q) return;
+    form.addEventListener("submit", async function(event) {
+      event.preventDefault();
 
-      window.location.href = engine + encodeURIComponent(q);
-    }
+      const query = input.value.trim();
 
-    document.getElementById("searchForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      searchWith("https://www.google.com/search?q=");
-    });
+      if (!query) return;
 
-    function googleSearch() {
-      searchWith("https://www.google.com/search?q=");
-    }
+      results.innerHTML = "";
+      status.textContent = "Searching...";
 
-    function duckSearch() {
-      searchWith("https://html.duckduckgo.com/html/?q=");
-    }
+      try {
+        const url =
+          "https://en.wikipedia.org/w/api.php" +
+          "?action=query" +
+          "&list=search" +
+          "&srsearch=" + encodeURIComponent(query) +
+          "&srlimit=10" +
+          "&format=json" +
+          "&origin=*";
 
-    function bingSearch() {
-      searchWith("https://www.bing.com/search?q=");
-    }
+        const response = await fetch(url);
+        const data = await response.json();
 
-    document.getElementById("urlForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+        const items = data.query.search;
 
-      let address = document.getElementById("url").value.trim();
+        status.textContent =
+          items.length + " result(s) found";
 
-      if (!address.startsWith("http://") &&
-          !address.startsWith("https://")) {
-        address = "https://" + address;
+        if (items.length === 0) {
+          results.innerHTML =
+            "<div class='result'>No results found.</div>";
+          return;
+        }
+
+        items.forEach(item => {
+
+          const title = document.createElement("h2");
+          title.textContent = item.title;
+
+          const description = document.createElement("p");
+          description.innerHTML =
+            item.snippet + "...";
+
+          const link = document.createElement("a");
+          link.href =
+            "https://en.wikipedia.org/wiki/" +
+            encodeURIComponent(item.title.replace(/ /g, "_"));
+
+          link.target = "_blank";
+          link.textContent = "Read article";
+
+          const box = document.createElement("div");
+          box.className = "result";
+
+          box.appendChild(title);
+          box.appendChild(description);
+          box.appendChild(link);
+
+          results.appendChild(box);
+        });
+
+      } catch (error) {
+
+        status.textContent = "";
+
+        results.innerHTML =
+          "<div class='result'>" +
+          "Sorry, the search could not be completed." +
+          "</div>";
       }
-
-      window.location.href = address;
     });
   </script>
 
 </body>
-                            </html>
+                                      </html>      
