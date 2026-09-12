@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web Search Portal</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #111827, #2563eb);
+      color: white;
+    }
+
+    .box {
+      width: 90%;
+      max-width: 650px;
+      padding: 35px;
+      text-align: center;
+      background: rgba(255,255,255,0.12);
+      border-radius: 20px;
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      opacity: 0.85;
+    }
+
+    form {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    input {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 15px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .engines {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    small {
+      display: block;
+      margin-top: 25px;
+      opacity: 0.65;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <h1>🌐 Web Search Portal</h1>
+    <p>Search the web or open a website.</p>
+
+    <form id="searchForm">
+      <input id="search" placeholder="Search the web..." required>
+      <button type="submit">Search</button>
+    </form>
+
+    <form id="urlForm">
+      <input id="url" placeholder="https://example.com" required>
+      <button type="submit">Open</button>
+    </form>
+
+    <div class="engines">
+      <button onclick="googleSearch()">Google</button>
+      <button onclick="duckSearch()">DuckDuckGo</button>
+      <button onclick="bingSearch()">Bing</button>
+    </div>
+
+    <small>
+      Search portal for normal web browsing. It does not bypass network restrictions.
+    </small>
+  </div>
+
+  <script>
+    function searchWith(engine) {
+      const q = document.getElementById("search").value.trim();
+
+      if (!q) return;
+
+      window.location.href = engine + encodeURIComponent(q);
+    }
+
+    document.getElementById("searchForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      searchWith("https://www.google.com/search?q=");
+    });
+
+    function googleSearch() {
+      searchWith("https://www.google.com/search?q=");
+    }
+
+    function duckSearch() {
+      searchWith("https://html.duckduckgo.com/html/?q=");
+    }
+
+    function bingSearch() {
+      searchWith("https://www.bing.com/search?q=");
+    }
+
+    document.getElementById("urlForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      let address = document.getElementById("url").value.trim();
+
+      if (!address.startsWith("http://") &&
+          !address.startsWith("https://")) {
+        address = "https://" + address;
+      }
+
+      window.location.href = address;
+    });
+  </script>
+
+</body>
+                            </html>
