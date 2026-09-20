@@ -1,204 +1,535 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Search Portal</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Portal</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #111827, #2563eb);
-      color: white;
-    }
+:root {
+  --bg: #07100d;
+  --panel: #0c1713;
+  --panel2: #101e19;
+  --border: #1b332a;
+  --green: #20d879;
+  --text: #f2f7f4;
+  --muted: #82958c;
+}
 
-    .container {
-      width: 92%;
-      max-width: 800px;
-      margin: auto;
-      padding: 40px 0;
-    }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 50% 20%, #12372a 0%, transparent 35%),
+    linear-gradient(135deg, #050a08, #0a1510 55%, #050806);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
 
-    h1 {
-      text-align: center;
-      font-size: 38px;
-      margin-bottom: 10px;
-    }
+/* TOP BAR */
+.topbar {
+  height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(5,10,8,.9);
+}
 
-    .subtitle {
-      text-align: center;
-      opacity: .8;
-      margin-bottom: 25px;
-    }
+.logo {
+  color: var(--green);
+  font-size: 20px;
+  font-weight: bold;
+  white-space: nowrap;
+}
 
-    .search-box {
-      display: flex;
-      gap: 10px;
-    }
+.menu {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+  color: white;
+  font-size: 22px;
+}
 
-    input {
-      flex: 1;
-      padding: 15px;
-      border: 0;
-      border-radius: 10px;
-      font-size: 16px;
-      outline: none;
-    }
+.top-search {
+  flex: 1;
+  max-width: 700px;
+  margin: auto;
+}
 
-    button {
-      padding: 15px 22px;
-      border: 0;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+.top-search input {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  outline: none;
+  background: #0d1a15;
+  color: white;
+  font-size: 15px;
+}
 
-    #results {
-      margin-top: 25px;
-    }
+.top-search input:focus {
+  border-color: var(--green);
+}
 
-    .result {
-      background: rgba(255,255,255,.12);
-      padding: 18px;
-      margin-bottom: 12px;
-      border-radius: 12px;
-    }
+/* SIDEBAR */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 58px;
+  bottom: 0;
+  width: 210px;
+  padding: 18px 12px;
+  background: #07100d;
+  border-right: 1px solid var(--border);
+  transition: .25s;
+}
 
-    .result h2 {
-      margin: 0 0 8px;
-      font-size: 20px;
-    }
+.sidebar.closed {
+  transform: translateX(-100%);
+}
 
-    .result a {
-      color: white;
-      text-decoration: none;
-    }
+.nav-button {
+  width: 100%;
+  padding: 13px;
+  margin-bottom: 7px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #a8b8b0;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+}
 
-    .result p {
-      opacity: .85;
-      line-height: 1.5;
-    }
+.nav-button:hover,
+.nav-button.active {
+  background: #10231a;
+  color: var(--green);
+}
 
-    .status {
-      text-align: center;
-      margin-top: 25px;
-      opacity: .8;
-    }
-  </style>
+/* MAIN */
+main {
+  margin-left: 210px;
+  padding: 45px 25px;
+  transition: .25s;
+}
+
+main.full {
+  margin-left: 0;
+}
+
+.hero {
+  max-width: 850px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.hero-logo {
+  font-size: 38px;
+  font-weight: bold;
+  color: var(--green);
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: var(--muted);
+  margin-bottom: 25px;
+}
+
+/* SEARCH */
+.search-box {
+  display: flex;
+  gap: 8px;
+  max-width: 700px;
+  margin: auto;
+}
+
+.search-box input {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: #0d1a15;
+  color: white;
+  font-size: 16px;
+  outline: none;
+}
+
+.search-box input:focus {
+  border-color: var(--green);
+}
+
+.search-box button {
+  border: 0;
+  border-radius: 14px;
+  padding: 0 20px;
+  background: var(--green);
+  color: #041008;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* CARDS */
+.section {
+  max-width: 900px;
+  margin: 45px auto 0;
+}
+
+.section h2 {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 13px;
+}
+
+.card {
+  min-height: 120px;
+  padding: 20px 12px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  background: rgba(12,23,19,.9);
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--green);
+  background: #10251b;
+}
+
+.icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.card span {
+  color: #c7d2cd;
+  font-size: 14px;
+}
+
+/* PAGES */
+.page {
+  display: none;
+  max-width: 900px;
+  margin: auto;
+}
+
+.page.active {
+  display: block;
+}
+
+.panel {
+  background: #0c1713;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  padding: 20px;
+}
+
+.history-item {
+  padding: 14px 5px;
+  border-bottom: 1px solid var(--border);
+  color: #aebcb5;
+}
+
+/* MOBILE */
+@media(max-width:700px) {
+  .sidebar {
+    width: 180px;
+  }
+
+  main {
+    margin-left: 0;
+    padding: 30px 15px;
+  }
+
+  .hero-logo {
+    font-size: 30px;
+  }
+
+  .search-box {
+    flex-direction: column;
+  }
+
+  .search-box button {
+    min-height: 48px;
+  }
+
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <div class="container">
+<header class="topbar">
+  <button class="menu" onclick="toggleMenu()">☰</button>
 
-    <h1>🌐 My Search</h1>
+  <div class="logo">My Portal</div>
 
-    <div class="subtitle">
-      Search and view results on this page
+  <div class="top-search">
+    <input
+      id="topSearch"
+      placeholder="Search the web..."
+      onkeydown="if(event.key==='Enter') searchWeb(this.value)"
+    >
+  </div>
+</header>
+
+<aside class="sidebar" id="sidebar">
+
+  <button class="nav-button active" onclick="showPage('home', this)">
+    🏠 Home
+  </button>
+
+  <button class="nav-button" onclick="showPage('apps', this)">
+    ◈ Apps
+  </button>
+
+  <button class="nav-button" onclick="showPage('history', this)">
+    ◷ History
+  </button>
+
+  <button class="nav-button" onclick="showPage('settings', this)">
+    ⚙ Settings
+  </button>
+
+</aside>
+
+<main id="main">
+
+  <!-- HOME -->
+  <section class="page active" id="home">
+
+    <div class="hero">
+
+      <div class="hero-logo">My Portal</div>
+
+      <div class="subtitle">
+        Search the web and open your favorite sites
+      </div>
+
+      <form class="search-box" onsubmit="searchWeb(document.getElementById('search').value); return false;">
+        <input
+          id="search"
+          placeholder="Search or enter a website..."
+          autocomplete="off"
+        >
+        <button type="submit">Search</button>
+      </form>
+
     </div>
 
-    <form id="searchForm" class="search-box">
-      <input
-        id="searchInput"
-        type="text"
-        placeholder="Search for something..."
-        autocomplete="off"
-        required
-      >
+    <div class="section">
 
-      <button type="submit">Search</button>
-    </form>
+      <h2>Quick Links</h2>
 
-    <div id="status" class="status"></div>
+      <div class="cards">
 
-    <div id="results"></div>
+        <div class="card" onclick="openSite('https://www.google.com')">
+          <div class="icon">🔎</div>
+          <span>Google</span>
+        </div>
 
-  </div>
+        <div class="card" onclick="openSite('https://www.youtube.com')">
+          <div class="icon">▶️</div>
+          <span>YouTube</span>
+        </div>
 
-  <script>
-    const form = document.getElementById("searchForm");
-    const input = document.getElementById("searchInput");
-    const results = document.getElementById("results");
-    const status = document.getElementById("status");
+        <div class="card" onclick="openSite('https://www.reddit.com')">
+          <div class="icon">🟠</div>
+          <span>Reddit</span>
+        </div>
 
-    form.addEventListener("submit", async function(event) {
-      event.preventDefault();
+        <div class="card" onclick="openSite('https://github.com')">
+          <div class="icon">◉</div>
+          <span>GitHub</span>
+        </div>
 
-      const query = input.value.trim();
+        <div class="card" onclick="openSite('https://wikipedia.org')">
+          <div class="icon">W</div>
+          <span>Wikipedia</span>
+        </div>
 
-      if (!query) return;
+        <div class="card" onclick="openSite('https://discord.com')">
+          <div class="icon">💬</div>
+          <span>Discord</span>
+        </div>
 
-      results.innerHTML = "";
-      status.textContent = "Searching...";
+      </div>
 
-      try {
-        const url =
-          "https://en.wikipedia.org/w/api.php" +
-          "?action=query" +
-          "&list=search" +
-          "&srsearch=" + encodeURIComponent(query) +
-          "&srlimit=10" +
-          "&format=json" +
-          "&origin=*";
+    </div>
 
-        const response = await fetch(url);
-        const data = await response.json();
+  </section>
 
-        const items = data.query.search;
+  <!-- APPS -->
+  <section class="page" id="apps">
 
-        status.textContent =
-          items.length + " result(s) found";
+    <h2>Apps</h2>
 
-        if (items.length === 0) {
-          results.innerHTML =
-            "<div class='result'>No results found.</div>";
-          return;
-        }
+    <div class="cards">
 
-        items.forEach(item => {
+      <div class="card" onclick="openSite('https://www.google.com')">
+        <div class="icon">🔎</div>
+        <span>Google</span>
+      </div>
 
-          const title = document.createElement("h2");
-          title.textContent = item.title;
+      <div class="card" onclick="openSite('https://www.youtube.com')">
+        <div class="icon">▶️</div>
+        <span>YouTube</span>
+      </div>
 
-          const description = document.createElement("p");
-          description.innerHTML =
-            item.snippet + "...";
+      <div class="card" onclick="openSite('https://github.com')">
+        <div class="icon">◉</div>
+        <span>GitHub</span>
+      </div>
 
-          const link = document.createElement("a");
-          link.href =
-            "https://en.wikipedia.org/wiki/" +
-            encodeURIComponent(item.title.replace(/ /g, "_"));
+      <div class="card" onclick="openSite('https://wikipedia.org')">
+        <div class="icon">W</div>
+        <span>Wikipedia</span>
+      </div>
 
-          link.target = "_blank";
-          link.textContent = "Read article";
+    </div>
 
-          const box = document.createElement("div");
-          box.className = "result";
+  </section>
 
-          box.appendChild(title);
-          box.appendChild(description);
-          box.appendChild(link);
+  <!-- HISTORY -->
+  <section class="page" id="history">
 
-          results.appendChild(box);
-        });
+    <h2>History</h2>
 
-      } catch (error) {
+    <div class="panel" id="historyList">
+      <div class="history-item">No searches yet.</div>
+    </div>
 
-        status.textContent = "";
+  </section>
 
-        results.innerHTML =
-          "<div class='result'>" +
-          "Sorry, the search could not be completed." +
-          "</div>";
-      }
-    });
-  </script>
+  <!-- SETTINGS -->
+  <section class="page" id="settings">
+
+    <h2>Settings</h2>
+
+    <div class="panel">
+
+      <p>Search engine</p>
+
+      <select id="engine">
+        <option value="https://www.google.com/search?q=">Google</option>
+        <option value="https://www.bing.com/search?q=">Bing</option>
+        <option value="https://search.brave.com/search?q=">Brave Search</option>
+      </select>
+
+      <br><br>
+
+      <button onclick="clearHistory()">
+        Clear search history
+      </button>
+
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+
+let historyData = [];
+
+function toggleMenu() {
+  document.getElementById("sidebar").classList.toggle("closed");
+}
+
+function showPage(id, button) {
+
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
+  });
+
+  document.getElementById(id).classList.add("active");
+
+  document.querySelectorAll(".nav-button").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  button.classList.add("active");
+}
+
+function searchWeb(value) {
+
+  value = value.trim();
+
+  if (!value) return;
+
+  historyData.unshift(value);
+
+  updateHistory();
+
+  const engine =
+    document.getElementById("engine")?.value ||
+    "https://www.google.com/search?q=";
+
+  window.open(
+    engine + encodeURIComponent(value),
+    "_blank"
+  );
+}
+
+function openSite(url) {
+
+  historyData.unshift(url);
+  updateHistory();
+
+  window.open(url, "_blank");
+}
+
+function updateHistory() {
+
+  const box = document.getElementById("historyList");
+
+  if (!historyData.length) {
+    box.innerHTML =
+      '<div class="history-item">No searches yet.</div>';
+    return;
+  }
+
+  box.innerHTML = historyData
+    .slice(0, 20)
+    .map(item =>
+      `<div class="history-item">${escapeHtml(item)}</div>`
+    )
+    .join("");
+}
+
+function clearHistory() {
+  historyData = [];
+  updateHistory();
+}
+
+function escapeHtml(text) {
+
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+</script>
 
 </body>
-                                      </html>      
+    </html>
